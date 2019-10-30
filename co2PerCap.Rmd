@@ -68,7 +68,6 @@ ex_tab %>%
 ```
 
 ```{r}
-data[data$X2014 > quantile(data$X2014, prob=0.95), c(1,216)]
 my_tab <- data[data$X2014 > quantile(data$X2014, prob=0.95), c(1,216)]
 kable(my_tab, format = "html", col.names = c("Country", "PerCapEmissions.2014"), align = "l")
 ```
