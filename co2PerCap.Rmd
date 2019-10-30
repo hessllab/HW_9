@@ -39,7 +39,7 @@ my_tab %>%
 
 1. Are the data in a flat file format? 
 
-The data is not in a flat file format.
+The data is in a flat file format.
 
 2. What is the structure of the data?  Are there any variables you might need to convert prior to manipulating the data?
 
@@ -52,6 +52,13 @@ str(co)
 The data has 192 observations and 216 variables. Country is a factor with 192 levels.
 
 3. What countries had per capita emissions larger than the 95th percentile in 2014? Make a table of their names and per capita emissions. Hint: Use quantile() to find the 95% cutoff.
+
+```{r}
+quantile(co$x2014,.95)
+```
+
+95 percentile is 15.4
+
 
 Your table should look something like this:
 ```{r, echo=FALSE}
