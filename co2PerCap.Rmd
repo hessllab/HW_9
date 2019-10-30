@@ -1,10 +1,15 @@
+
 ---
 title: "HW9"
-author: "Shaun Donmoyer"
+author: "Shaun Donmoyer and Tobi Ore"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 ---
-
+```{r, libraries}
+library(markdown)
+library(knitr)
+library(kableExtra)
+```
 
 ***
 ### Questions:
@@ -15,57 +20,40 @@ The data is not in a flat file format.
 
 2. What is the structure of the data?  Are there any variables you might need to convert prior to manipulating the data?
 
-```{r}
-data_co2 <- read.csv("co2_emissions_tonnes_per_person_gapminder.csv")
-data_co2
-str(data_co2)
-```
-
 The data has 192 observations and 216 variables. Country is a factor with 192 levels. Whatever year you are seeking to analyize the year has to be a numeric value.
 
 3. What countries had per capita emissions larger than the 95th percentile in 2014? Make a table of their names and per capita emissions. Hint: Use quantile() to find the 95% cutoff.
 
-```{r}
-library(markdown)
-library(knitr)
-library(kableExtra)
-data_co2 <- read.csv("co2_emissions_tonnes_per_person_gapminder.csv")
-data_co2
-is.numeric(data_co2$X2014)
-dat <- quantile(data_co2$X2014, c(.95))
-new_data <- data_co2[data_co2$X2014 > dat, ]
-
-dat_tab <- data.frame("Country"= new_data$country, "PerCapEmissions 2014" = new_data$X2014)
-dat_tab %>%
-  kable() %>%
-  kable_styling()
-```
-
-95th percentile is 15.4
-
-
 Your table should look something like this:
 ```{r, echo=FALSE}
+data <- read.csv("co2_emissions_tonnes_per_person_gapminder.csv")
+q_2014 <- quantile(data$X2014, 0.95)
+new_data <- data[data$X2014 > q_2014,]
+
 cntrys <- rep("country", 5)
 dat <- rep("NA", 5)
-ex_tab <- data.frame("Country"=dat, "PerCapEmissions 2014"=dat)
+ex_tab <- data.frame("Country"=new_data$country, "PerCapEmissions 2014"=new_data$X2014)
 ex_tab %>%
   kable() %>%
   kable_styling()
 ```
 
-4. Make a table comparing the per capita emissions of the US and the world's highest per capita emitter (from above)  in 1925, 1950, and 2014.
-
-
+4. Make a table comparing the per capita emissions of the US and the world's highest per capita emitter (from above)  in 1925, 1950, and 2014.  
 
 Your finished product might look something like this:
+
 ```{r, echo=FALSE}
+my_var <- c("Qatar", "United States")
+top_data <- data[data$country==my_var,c("country","X1925","X1950","X2014")]
+top_data <- as.data.frame(t(top_data))
+
 dat <- rep("NA", 3)
-ex_tab <- data.frame("TopCountry"=dat, "United States"=dat)
+ex_tab <- data.frame("TopCountry"=top_data$`139`[-1], "United States"=top_data$`184`[-1])
 row.names(ex_tab) <- c("1925", "1950", "2014")
 ex_tab %>%
   kable() %>%
   kable_styling()
 
 ```
+
 
