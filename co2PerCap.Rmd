@@ -39,7 +39,7 @@ my_tab %>%
 
 1. Are the data in a flat file format? 
 
-The data is in a flat file format.
+The data is not in a flat file format.
 
 2. What is the structure of the data?  Are there any variables you might need to convert prior to manipulating the data?
 
@@ -49,12 +49,19 @@ co
 str(co)
 ```
 
-The data has 192 observations and 216 variables. Country is a factor with 192 levels.
+The data has 192 observations and 216 variables. Country is a factor with 192 levels. Whatever year you are seeking to analyize the year has to be a numeric value.
 
 3. What countries had per capita emissions larger than the 95th percentile in 2014? Make a table of their names and per capita emissions. Hint: Use quantile() to find the 95% cutoff.
 
 ```{r}
-quantile(co$x2014,.95)
+is.numeric(data_co2$X2014)
+dat <- quantile(data_co2$X2014, c(.95))
+new_data <- data_co2[data_co2$X2014 > dat, ]
+
+dat_tab <- data.frame("Country"= new_data$country, "PerCapEmissions 2014" = new_data$X2014)
+dat_tab %>%
+  kable() %>%
+  kable_styling()
 ```
 
 95 percentile is 15.4
