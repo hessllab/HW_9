@@ -39,7 +39,21 @@ my_tab %>%
 
 1. Are the data in a flat file format? 
 
+Yes, it is. The csv file contains co2 emission data of 192 countries for 215 years untill 2014. Each row represents one country and each column corresponds to CO2 observation in a year. 
+```{r}
+data <- read.csv(file = "./data/co2_emissions_tonnes_per_person_gapminder.csv")
+nrow(data)
+ncol(data)
+head(data, n=2)
+```
+
 2. What is the structure of the data?  Are there any variables you might need to convert prior to manipulating the data?
+
+The structure of the data is data.frame. A variable of column 'country' is read as a factor with 192 levels, which is better to be converted to characters.
+```{r}
+str(data)
+as.character(data$country)
+```
 
 3. What countries had per capita emissions larger than the 95th percentile in 2014? Make a table of their names and per capita emissions. Hint: Use quantile() to find the 95% cutoff.
 
@@ -52,6 +66,13 @@ ex_tab %>%
   kable() %>%
   kable_styling()
 ```
+
+```{r}
+data[data$X2014 > quantile(data$X2014, prob=0.95), c(1,216)]
+my_tab <- data[data$X2014 > quantile(data$X2014, prob=0.95), c(1,216)]
+kable(my_tab, format = "html", col.names = c("Country", "PerCapEmissions.2014"), align = "l")
+```
+
 
 4. Make a table comparing the per capita emissions of the US and the world's highest per capita emitter (from above)  in 1925, 1950, and 2014.  
 
@@ -66,3 +87,9 @@ ex_tab %>%
 
 ```
 
+```{r}
+my_tab_compare <- data[data$country == "Bahrain", c("X1925","X1950","X2014")]
+my_tab_compare <- rbind(my_tab_compare, data[data$country == "United States", c("X1925","X1950","X2014")])
+t(my_tab_compare)
+kable(my_tab_compare, format = "html", col.names = c("TopCountry", "United States"), row.names = c("1925", "1950", "2014"), align = "l")
+```
