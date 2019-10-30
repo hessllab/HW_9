@@ -39,56 +39,59 @@ my_tab %>%
 
 1. Are the data in a flat file format? 
 
-Yes, it is. The csv file contains co2 emission data of 192 countries for 215 years untill 2014. Each row represents one country and each column corresponds to CO2 observation in a year. 
+ANSWER:
+Yes, it is. The csv file is composed of 192 rows and 216 columns, which contains co2 emission data of 192 countries for 215 years untill 2014. Each row represents one country and each column corresponds to CO2 observation in a year. 
 ```{r}
 data <- read.csv(file = "./data/co2_emissions_tonnes_per_person_gapminder.csv")
 nrow(data)
 ncol(data)
+```
+```{r}
 head(data, n=2)
 ```
 
+
 2. What is the structure of the data?  Are there any variables you might need to convert prior to manipulating the data?
 
-The structure of the data is data.frame. A variable of column 'country' is read as a factor with 192 levels, which is better to be converted to characters.
+ANSWER:
+The structure of the data is data.frame. The variable 'country' is currently read as 'integers', which is better to be converted into characters.
 ```{r}
-str(data)
-as.character(data$country)
+str(data) # provides structure of the data.
+typeof(data$country) # provides data type in the column data$country.
+data$country <- as.character(data$country) # converts data in data$country into characters.
+typeof(data$country) # showing result of above procedures.
 ```
+
 
 3. What countries had per capita emissions larger than the 95th percentile in 2014? Make a table of their names and per capita emissions. Hint: Use quantile() to find the 95% cutoff.
 
-Your table should look something like this:
-```{r, echo=FALSE}
-cntrys <- rep("country", 5)
-dat <- rep("NA", 5)
-ex_tab <- data.frame("Country"=dat, "PerCapEmissions 2014"=dat)
-ex_tab %>%
-  kable() %>%
-  kable_styling()
-```
-
+ANSWER
 ```{r}
-my_tab <- data[data$X2014 > quantile(data$X2014, prob=0.95), c(1,216)]
+my_tab <- data[data$X2014 > quantile(data$X2014, prob=0.95), c("country", "X2014")]
+# When defining my_tab, `data$X2014 > quantile(data$X2014, prob=0.95)` provides logical vector for the data in 2014 that are above the 95% quantile, selecting rows to print.
+# `c("country", "X2014")` specfies columns to include in the my_tab.
+
 kable(my_tab, format = "html", col.names = c("Country", "PerCapEmissions.2014"), align = "l")
+# Producing table in html format with column names of "Country" and "PerCapEmissions.2014".
 ```
 
 
 4. Make a table comparing the per capita emissions of the US and the world's highest per capita emitter (from above)  in 1925, 1950, and 2014.  
-
-Your finished product might look something like this:
-```{r, echo=FALSE}
-dat <- rep("NA", 3)
-ex_tab <- data.frame("TopCountry"=dat, "United States"=dat)
-row.names(ex_tab) <- c("1925", "1950", "2014")
-ex_tab %>%
-  kable() %>%
-  kable_styling()
-
-```
-
+ANSWER
 ```{r}
-my_tab_compare <- data[data$country == "Bahrain", c("X1925","X1950","X2014")]
+my_tab_compare <- data[data$country == my_tab[my_tab$X2014 == max(my_tab$X2014), 1], c("X1925","X1950","X2014")]
+# As `my_tab[my_tab$X2014 == max(my_tab$X2014), 1]` produces a name of the country that emitts highest co2 in 2014, `data[data$country == my_tab[my_tab$X2014 == max(my_tab$X2014), 1]` specifies the column of that country in the original data.
+# `c("X1925","X1950","X2014")` specifies years of data to extract.
+
 my_tab_compare <- rbind(my_tab_compare, data[data$country == "United States", c("X1925","X1950","X2014")])
-t(my_tab_compare)
-kable(my_tab_compare, format = "html", col.names = c("TopCountry", "United States"), row.names = c("1925", "1950", "2014"), align = "l")
+# This line appends co2 emission data of USA in the same three years into my_tab_compare.
+
+my_tab_compare_plot <- t(my_tab_compare)
+# `t()` function switches rows and columns. This line is added just to produce ideal table format.
+
+row.names(my_tab_compare_plot) <- c("1925", "1950", "2014")
+# Naming the row names in the my_tab_compare_plot.
+
+kable(my_tab_compare_plot, format = "html", col.names = c("TopCountry", "United States"), align = "l")
+# Producing table in html format with column names of "TopCountry" and "United States".
 ```
