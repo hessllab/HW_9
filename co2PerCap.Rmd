@@ -40,7 +40,7 @@ my_tab %>%
 1. Are the data in a flat file format? 
 
 ANSWER:
-Yes, it is. The csv file is composed of 192 rows and 216 columns, which contains co2 emission data of 192 countries for 215 years untill 2014. Each row represents one country and each column corresponds to CO2 observation in a year. 
+Yes, it is. The CSV file is composed of 192 rows and 216 columns, which contains co2 emission data of 192 countries for 215 years until 2014. Each row represents one country and each column corresponds to CO2 observation in a year. 
 ```{r}
 data <- read.csv(file = "./data/co2_emissions_tonnes_per_person_gapminder.csv")
 nrow(data)
@@ -65,7 +65,7 @@ typeof(data$country) # showing result of above procedures.
 
 3. What countries had per capita emissions larger than the 95th percentile in 2014? Make a table of their names and per capita emissions. Hint: Use quantile() to find the 95% cutoff.
 
-ANSWER
+ANSWER:
 ```{r}
 my_tab <- data[data$X2014 > quantile(data$X2014, prob=0.95), c("country", "X2014")]
 # When defining my_tab, `data$X2014 > quantile(data$X2014, prob=0.95)` provides logical vector for the data in 2014 that are above the 95% quantile, selecting rows to print.
@@ -77,7 +77,7 @@ kable(my_tab, format = "html", col.names = c("Country", "PerCapEmissions.2014"),
 
 
 4. Make a table comparing the per capita emissions of the US and the world's highest per capita emitter (from above)  in 1925, 1950, and 2014.  
-ANSWER
+ANSWER:
 ```{r}
 my_tab_compare <- data[data$country == my_tab[my_tab$X2014 == max(my_tab$X2014), 1], c("X1925","X1950","X2014")]
 # As `my_tab[my_tab$X2014 == max(my_tab$X2014), 1]` produces a name of the country that emitts highest co2 in 2014, `data[data$country == my_tab[my_tab$X2014 == max(my_tab$X2014), 1]` specifies the column of that country in the original data.
