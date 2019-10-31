@@ -18,6 +18,7 @@ library(kableExtra)
 
 The data is not in a flat file format.
 
+
 2. What is the structure of the data?  Are there any variables you might need to convert prior to manipulating the data?
 
 The data has 192 observations and 216 variables. Country is a factor with 192 levels. Whatever year you are seeking to analyize the year has to be a numeric value.
@@ -26,7 +27,7 @@ The data has 192 observations and 216 variables. Country is a factor with 192 le
 
 Your table should look something like this:
 ```{r, echo=FALSE}
-data <- read.csv("co2_emissions_tonnes_per_person_gapminder.csv")
+data <- read.csv("data/co2_emissions_tonnes_per_person_gapminder.csv")
 q_2014 <- quantile(data$X2014, 0.95)
 new_data <- data[data$X2014 > q_2014,]
 
@@ -47,8 +48,7 @@ my_var <- c("Qatar", "United States")
 top_data <- data[data$country==my_var,c("country","X1925","X1950","X2014")]
 top_data <- as.data.frame(t(top_data))
 
-dat <- rep("NA", 3)
-ex_tab <- data.frame("TopCountry"=top_data$`139`[-1], "United States"=top_data$`184`[-1])
+ex_tab <- data.frame("Qatar"=top_data$`139`[-1], "United States"=top_data$`184`[-1])
 row.names(ex_tab) <- c("1925", "1950", "2014")
 ex_tab %>%
   kable() %>%
