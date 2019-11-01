@@ -25,36 +25,55 @@ emissions <- read.csv("data/co2_emissions_tonnes_per_person_gapminder.csv")
 
 1. Are the data in a flat file format? 
 
-Yes. A csv is a type of flat file.
+ANSWER: Yes. A csv is a type of flat file.
+
 
 2. What is the structure of the data?  Are there any variables you might need to convert prior to manipulating the data?
-
+ 
+ANSWER: The structure of the data is data.frame. The data are one column of 192 country names (factor) followed by 215 years of emissions data until 2014 (numeric). The early years are mostly NA. 
 ```{r}
+nrow(emissions)
+ncol(emissions)
 str(emissions[,1:10])
+```  
+The variable 'country' is currently read as 'integers', which is better to be converted into characters.
+```{r}
+typeof(emissions$country)
+emissions$country <- as.character(emissions$country) # Converts data in data$country into characters.
+typeof(emissions$country)
 ```
 
-The data are one column of country names (factor) followed by 215 years of emissions data (numeric). The early years are mostly NA. 
 
 3. What countries had per capita emissions larger than the 95th percentile in 2014? Make a table of their names and per capita emissions. Hint: Use quantile() to find the 95% cutoff.
 
+ANSWER:
 ```{r}
-p95 = quantile(emissions$X2014, 0.95, na.rm=TRUE)
-polluters = emissions[(emissions$X2014 > p95),]
+p95 = quantile(emissions$X2014, 0.95, na.rm=TRUE) 
+# `p95` is defined as the 95% quatile value of CO2 emission in 2014.   
+polluters = emissions[(emissions$X2014 > p95),] 
+# As `emissions$X2014 > p95` provides logical vector for the column of 2014 that are above the 95% quantile, `polluters` will only includes rows with this condission in the `emissions`.
 table = data.frame(Country = polluters$country, CO2_Per_Capita = polluters$X2014)
+# Creating a data.frame with columns of "Country" and "CO2_Per_Capita".
 table %>%
-  kable() %>%
+  kable(align = "l") %>%
   kable_styling()
 ```
+
 
 4. Make a table comparing the per capita emissions of the US and the world's highest per capita emitter (from above)  in 1925, 1950, and 2014.
 
+ANSWER:
 ```{r}
-countries = emissions[emissions$country %in% c('United States', 'Qatar'),]
-table = countries[,colnames(countries) %in% c('X1925','X1950','X2014')]
-colnames(table) = c('1925','1950','2014')
-rownames(table) = c('USA','Qatar')
-table %>%
-  kable() %>%
+max_polluter = table[table$CO2_Per_Capita == max(table$CO2_Per_Capita), 1]
+# `max_polluter` is defined as a name of a country with the highest CO2 emission in 2014.
+max_polluter = as.character(max_polluter)
+countries = emissions[emissions$country %in% c('United States', max_polluter),]
+# `countries` has rows of United States and the world's highest per capita emitter extracted from `emissions` data. 
+table_compare = countries[,colnames(countries) %in% c('X1925','X1950','X2014')]
+# The three columns of 'X1925','X1950','X2014' are extracted from `countries`.
+colnames(table_compare) = c('1925','1950','2014')
+rownames(table_compare) = c('USA', max_polluter)
+table_compare %>%
+  kable(align = "l") %>%
   kable_styling()
 ```
-
