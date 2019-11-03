@@ -5,6 +5,12 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 ---
 
+You need to load the packages required to knit the doc.
+```{r, libraries}
+library(markdown)
+library(knitr)
+library(kableExtra)
+```
 
 ***
 ### Questions:
@@ -12,31 +18,35 @@ output: html_document
 1. Are the data in a flat file format? 
 ```
 Yes it is in csv format.
+But it is not a flat file - each row is a series of observations about a country, rather than each row being a single observation.
 ```
 2. What is the structure of the data?  Are there any variables you might need to convert prior to manipulating the data?
     The structure of the data is a dataframe.
     "Countries" is a factor and the years are numeric and most of them are filled with "NA." The structure consists of a data frame with 192 obervations of 216 variables. 
+    # I read the file in so that you can knit this .Rmd.  I also changed the name of the dataframe to co2 as co2_emissions_tonnes_per_person_gapminder is pretty long.
     ```{r}
-    str(co2_emissions_tonnes_per_person_gapminder)
+co2 <- read.csv("data/co2.csv")
+    str(co2)
     ```
-    We will need to convert the "Countries" into a character. co2_emissions_tonnes_per_person_gapminder
+    We will need to convert the "Countries" into a character. 
     ```{r}
-    $country <- as.character(co2_emissions_tonnes_per_person_gapminder$country)
+    co2$country <- as.character(co2$country)
     ```
 3. What countries had per capita emissions larger than the 95th percentile in 2014? Make a table of their names and per capita emissions. Hint: Use quantile() to find the 95% cutoff.
 ```{r}
- Percentile95 = quantile(co2_emissions_tonnes_per_person_gapminder$`2014`, 0.95)
- Countries_2014 = co2_emissions_tonnes_per_person_gapminder[(co2_emissions_tonnes_per_person_gapminder$`2014`> Percentile95),]
- Emission_Table = data.frame(Country = Countries_2014$country, PerCap = Countries_2014$`2014`
+ Percentile95 = quantile(co2$X2014, 0.95) ## does not work as there is no variable called 2014
+ Countries_2014 = co2[(co2$X2014 > Percentile95),]
+ Emission_Table = data.frame(Country = Countries_2014$country, PerCap = Countries_2014$X2014)
  Emission_Table %>%
  kable() %>%
  kable_styling()
 ```
 
+  
 4. Make a table comparing the per capita emissions of the US and the world's highest per capita emitter (from above)  in 1925, 1950, and 2014.  
 ```{r}
- CountriesCompared = co2_emissions_tonnes_per_person_gapminder[co2_emissions_tonnes_per_person_gapminder$country %in% c('United States', 'Qatar'),]
- WorldTable = CountriesCompared[,colnames(CountriesCompared) %in% c('1925', '1950', '2014')]
+ CountriesCompared = co2[co2$country %in% c('United States', 'Qatar'),]
+ WorldTable = CountriesCompared[,colnames(CountriesCompared) %in% c('1925', '1950', '2014')] ## does not work as the names are "X1925" etc.
  colnames(WorldTable) = c('1925', '1950', '2014')
  row.names(WorldTable) = c('Qatar', 'United States')
  WorldTable %>%
