@@ -26,6 +26,7 @@ emissions <- read.csv("data/co2_emissions_tonnes_per_person_gapminder.csv")
 1. Are the data in a flat file format? 
 
 ANSWER: Yes. A csv is a type of flat file.
+But, it is not a tidy file - not every column is a variable, some are observations.
 
 
 2. What is the structure of the data?  Are there any variables you might need to convert prior to manipulating the data?
